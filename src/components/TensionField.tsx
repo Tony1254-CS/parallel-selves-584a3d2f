@@ -131,7 +131,7 @@ const TensionField = ({ selves, activeSelf }: TensionFieldProps) => {
       animate={{ opacity: 1, y: 0 }}
       className="rounded-2xl border border-border/30 bg-background/50 backdrop-blur-sm p-4"
     >
-      <p className="text-[10px] uppercase tracking-widest text-muted-foreground/50 mb-3 font-mono">
+      <p className="text-[11px] uppercase tracking-widest text-muted-foreground/60 mb-3 font-mono">
         ⚡ Identity Tension Field
       </p>
       <canvas

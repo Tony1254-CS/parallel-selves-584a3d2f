@@ -80,7 +80,7 @@ const LandingScreen = ({ onSubmit }: LandingScreenProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-lg md:text-xl text-muted-foreground mb-2 font-light"
+          className="text-lg md:text-xl text-foreground/70 mb-2 font-light"
         >
           Meet the versions of you that could exist.
         </motion.p>
@@ -89,7 +89,7 @@ const LandingScreen = ({ onSubmit }: LandingScreenProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1 }}
-          className="text-sm text-muted-foreground/60 mb-12 font-mono"
+          className="text-sm text-muted-foreground/70 mb-12 font-mono"
         >
           Alternate Self Simulator
         </motion.p>
@@ -145,7 +145,7 @@ const LandingScreen = ({ onSubmit }: LandingScreenProps) => {
                 key={example}
                 type="button"
                 onClick={() => setInput(example)}
-                className="px-3 py-1.5 rounded-lg text-xs text-muted-foreground/60 border border-border/30 hover:border-primary/30 hover:text-muted-foreground transition-all"
+                className="px-3 py-1.5 rounded-lg text-xs text-muted-foreground/70 border border-border/40 hover:border-primary/30 hover:text-foreground transition-all"
               >
                 {example}
               </button>
