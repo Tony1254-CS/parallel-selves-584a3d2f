@@ -6,6 +6,7 @@ import QuantumSuperposition from "@/components/QuantumSuperposition";
 import ParallelSelfCard from "@/components/ParallelSelfCard";
 import TimelineBranch from "@/components/TimelineBranch";
 import DimensionalPortal from "@/components/DimensionalPortal";
+import TensionField from "@/components/TensionField";
 import CollapseMessage from "@/components/CollapseMessage";
 import { ParallelSelf, generateMockSelves } from "@/lib/archetypes";
 import { supabase } from "@/integrations/supabase/client";
@@ -229,6 +230,13 @@ const Index = () => {
 
               {/* Content */}
               <div className="max-w-7xl mx-auto px-4 pb-20">
+                {/* Tension Field - always visible in explore */}
+                {!showTimeline && (
+                  <div className="mb-6">
+                    <TensionField selves={selves} activeSelf={activeSelf} />
+                  </div>
+                )}
+
                 <AnimatePresence mode="wait">
                   {showTimeline ? (
                     <motion.div
