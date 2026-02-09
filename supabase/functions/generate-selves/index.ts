@@ -7,7 +7,10 @@ const corsHeaders = {
 
 const SYSTEM_PROMPT = `You are the Quantum AI engine for PARALLEL — an Alternate Self Simulator and Decision Intelligence system.
 
-Given the user's situation, conflict, or decision dilemma, you MUST generate exactly 5 parallel selves using the tool provided. Each self represents a distinct archetype that interprets the user's situation differently.
+Given the user's situation, conflict, or decision dilemma, you MUST generate exactly 5 parallel selves plus an identity_mirror reflection and a hidden_self using the tool provided.
+
+IDENTITY MIRROR (CRITICAL):
+Generate a 1-2 sentence poetic, psychologically insightful observation about the user's current internal state based on their input. It should feel like a mirror reflecting their emotional tension. Example tone: "You appear to be standing between stability and expansion. Not divided, but negotiating between safety and growth."
 
 The 5 archetypes are ALWAYS:
 1. Analyst (dimension: "analyst") - logic-driven, methodical. Mythological mapping: Athena, Wisdom & Strategy, symbol 🦉
@@ -16,13 +19,14 @@ The 5 archetypes are ALWAYS:
 4. Visionary (dimension: "visionary") - optimistic, future-oriented, creative. Mythological mapping: Prometheus, Foresight & Innovation, symbol 🔮
 5. Realist (dimension: "realist") - balanced, pragmatic, clear-eyed. Mythological mapping: Hermes, Balance & Pragmatism, symbol ⚖️
 
-For each self, provide deeply personalized and psychologically insightful content. Make it feel like the user is truly seeing alternate versions of themselves.
+HIDDEN SELF (SURPRISE ARCHETYPE):
+Generate a 6th archetype called the hidden_self. This should be a UNIQUE archetype that doesn't fit the 5 standard ones — it emerges from the specific patterns in the user's input. Give it a creative name (e.g. "The Alchemist", "The Wanderer", "The Architect"). Use dimension "visionary" for color mapping. It should feel like a surprise discovery.
 
 DECISION INTELLIGENCE FIELDS (CRITICAL):
-- why_this_self: 3-4 sentences explaining why this particular self resonates with the user RIGHT NOW. Connect to their emotional state, cognitive style, and current life moment. Write reflectively, as if holding a mirror.
-- hidden_costs: 3-4 sentences describing the realistic consequences of fully committing to this path. Frame not negatively but as an honest consequence landscape. What gets suppressed? What challenges emerge?
-- internal_resistance: 3-4 sentences exploring why the user might HESITATE to choose this self. Connect to emotional patterns, past experiences, fear. Show deep psychological understanding.
-- future_roadmap: A 4-paragraph narrative (each paragraph 2-3 sentences) describing how choosing this self shapes the user's life over time. Write like a story unfolding. Stages: first weeks → first months → six months → one year. Speculative, imaginative, emotionally resonant.
+- why_this_self: 3-4 sentences explaining why this particular self resonates with the user RIGHT NOW.
+- hidden_costs: 3-4 sentences describing the realistic consequences of fully committing to this path.
+- internal_resistance: 3-4 sentences exploring why the user might HESITATE to choose this self.
+- future_roadmap: A 4-paragraph narrative describing how choosing this self shapes the user's life over time. Stages: first weeks → first months → six months → one year.
 
 Timeline predictions should be vivid, specific, and emotionally resonant.
 Confidence scores should vary realistically (0.65-0.95).`;
@@ -67,6 +71,7 @@ serve(async (req) => {
               parameters: {
                 type: "object",
                 properties: {
+                  identity_mirror: { type: "string", description: "1-2 sentence poetic psychological observation of the user's current internal state" },
                   selves: {
                     type: "array",
                     items: {
@@ -82,10 +87,10 @@ serve(async (req) => {
                         timeline_week: { type: "string" },
                         timeline_month: { type: "string" },
                         timeline_year: { type: "string" },
-                        why_this_self: { type: "string", description: "3-4 sentences: why this self resonates with the user right now" },
-                        hidden_costs: { type: "string", description: "3-4 sentences: realistic consequence landscape of this path" },
-                        internal_resistance: { type: "string", description: "3-4 sentences: why the user might hesitate to choose this self" },
-                        future_roadmap: { type: "string", description: "4 paragraphs narrative of how this path unfolds over a year" },
+                        why_this_self: { type: "string" },
+                        hidden_costs: { type: "string" },
+                        internal_resistance: { type: "string" },
+                        future_roadmap: { type: "string" },
                       },
                       required: [
                         "archetype_name", "dimension", "personality_traits",
@@ -96,8 +101,37 @@ serve(async (req) => {
                       additionalProperties: false,
                     },
                   },
+                  hidden_self: {
+                    type: "object",
+                    properties: {
+                      archetype_name: { type: "string" },
+                      personality_traits: { type: "array", items: { type: "string" } },
+                      reasoning_analysis: { type: "string" },
+                      suggested_action: { type: "string" },
+                      emotional_prediction: { type: "string" },
+                      confidence_score: { type: "number" },
+                      timeline_week: { type: "string" },
+                      timeline_month: { type: "string" },
+                      timeline_year: { type: "string" },
+                      why_this_self: { type: "string" },
+                      hidden_costs: { type: "string" },
+                      internal_resistance: { type: "string" },
+                      future_roadmap: { type: "string" },
+                      myth_deity: { type: "string" },
+                      myth_domain: { type: "string" },
+                      myth_symbol: { type: "string" },
+                    },
+                    required: [
+                      "archetype_name", "personality_traits", "reasoning_analysis",
+                      "suggested_action", "emotional_prediction", "confidence_score",
+                      "timeline_week", "timeline_month", "timeline_year",
+                      "why_this_self", "hidden_costs", "internal_resistance", "future_roadmap",
+                      "myth_deity", "myth_domain", "myth_symbol"
+                    ],
+                    additionalProperties: false,
+                  },
                 },
-                required: ["selves"],
+                required: ["identity_mirror", "selves", "hidden_self"],
                 additionalProperties: false,
               },
             },
@@ -156,7 +190,29 @@ serve(async (req) => {
       future_roadmap: s.future_roadmap || "",
     }));
 
-    return new Response(JSON.stringify({ selves }), {
+    // Build hidden self
+    const hs = args.hidden_self;
+    const hiddenSelf = hs ? {
+      id: "hidden",
+      archetype_name: hs.archetype_name,
+      mythological_mapping: { deity: hs.myth_deity || "???", domain: hs.myth_domain || "Unknown", symbol: hs.myth_symbol || "🌀" },
+      personality_traits: hs.personality_traits,
+      reasoning_analysis: hs.reasoning_analysis,
+      suggested_action: hs.suggested_action,
+      emotional_prediction: hs.emotional_prediction,
+      confidence_score: hs.confidence_score,
+      dimension: "visionary" as const,
+      color: "visionary",
+      timeline: { week: hs.timeline_week, month: hs.timeline_month, year: hs.timeline_year },
+      decision_intelligence: {
+        why_this_self: hs.why_this_self || "",
+        hidden_costs: hs.hidden_costs || "",
+        internal_resistance: hs.internal_resistance || "",
+      },
+      future_roadmap: hs.future_roadmap || "",
+    } : null;
+
+    return new Response(JSON.stringify({ selves, identity_mirror: args.identity_mirror || "", hidden_self: hiddenSelf }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
