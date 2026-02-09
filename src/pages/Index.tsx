@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 import LandingScreen from "@/components/LandingScreen";
@@ -9,10 +9,12 @@ import DimensionalPortal from "@/components/DimensionalPortal";
 import TensionField from "@/components/TensionField";
 import CompareSelves from "@/components/CompareSelves";
 import CollapseMessage from "@/components/CollapseMessage";
+import IdentityMirror from "@/components/IdentityMirror";
+import HiddenSelfReveal from "@/components/HiddenSelfReveal";
 import { ParallelSelf, generateMockSelves } from "@/lib/archetypes";
 import { supabase } from "@/integrations/supabase/client";
 
-type Phase = "landing" | "processing" | "superposition" | "explore";
+type Phase = "landing" | "processing" | "mirror" | "superposition" | "explore";
 
 const Index = () => {
   const [phase, setPhase] = useState<Phase>("landing");
@@ -23,6 +25,10 @@ const Index = () => {
   const [showTimeline, setShowTimeline] = useState(false);
   const [showCompare, setShowCompare] = useState(false);
   const [showCollapseMessage, setShowCollapseMessage] = useState(false);
+  const [mirrorText, setMirrorText] = useState("");
+  const [hiddenSelf, setHiddenSelf] = useState<ParallelSelf | null>(null);
+  const [showHiddenSelf, setShowHiddenSelf] = useState(false);
+  const switchCount = useRef(0);
 
   const handleSubmit = useCallback(async (input: string) => {
     setUserInput(input);
@@ -37,7 +43,15 @@ const Index = () => {
 
       if (data?.selves?.length) {
         setSelves(data.selves);
-        setPhase("superposition");
+        if (data.identity_mirror) {
+          setMirrorText(data.identity_mirror);
+          setPhase("mirror");
+        } else {
+          setPhase("superposition");
+        }
+        if (data.hidden_self) {
+          setHiddenSelf(data.hidden_self);
+        }
       } else {
         throw new Error("No selves generated");
       }
@@ -52,7 +66,8 @@ const Index = () => {
       }
       const generated = generateMockSelves(input);
       setSelves(generated);
-      setPhase("superposition");
+      setMirrorText("You appear to be standing at a crossroads — not lost, but pausing to listen to the competing voices within.");
+      setPhase("mirror");
     }
   }, []);
 
@@ -73,12 +88,23 @@ const Index = () => {
 
   const handleSwitchSelf = useCallback((self: ParallelSelf) => {
     if (self.id === activeSelf?.id) return;
+    switchCount.current += 1;
+    // Trigger hidden self after 3 switches
+    if (switchCount.current === 3 && hiddenSelf && !selves.find(s => s.id === "hidden")) {
+      setShowHiddenSelf(true);
+    }
     setIsPortalTransitioning(true);
     setTimeout(() => {
       setActiveSelf(self);
       setTimeout(() => setIsPortalTransitioning(false), 600);
     }, 400);
-  }, [activeSelf]);
+  }, [activeSelf, hiddenSelf, selves]);
+
+  const handleAcceptHiddenSelf = useCallback((self: ParallelSelf) => {
+    setSelves(prev => [...prev, self]);
+    setShowHiddenSelf(false);
+    toast.success(`${self.archetype_name} has joined your parallel selves.`);
+  }, []);
 
   const handleReset = useCallback(() => {
     setPhase("landing");
@@ -88,11 +114,22 @@ const Index = () => {
     setShowTimeline(false);
     setShowCompare(false);
     setShowCollapseMessage(false);
+    setMirrorText("");
+    setHiddenSelf(null);
+    setShowHiddenSelf(false);
+    switchCount.current = 0;
   }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <CollapseMessage show={showCollapseMessage} />
+      {showHiddenSelf && hiddenSelf && (
+        <HiddenSelfReveal
+          hiddenSelf={hiddenSelf}
+          onAccept={handleAcceptHiddenSelf}
+          onDismiss={() => setShowHiddenSelf(false)}
+        />
+      )}
 
       <AnimatePresence mode="wait">
         {phase === "landing" && (
@@ -101,6 +138,14 @@ const Index = () => {
           </motion.div>
         )}
 
+        {phase === "mirror" && (
+          <motion.div key="mirror" exit={{ opacity: 0 }}>
+            <IdentityMirror
+              mirrorText={mirrorText}
+              onComplete={() => setPhase("superposition")}
+            />
+          </motion.div>
+        )}
         {phase === "processing" && (
           <motion.div
             key="processing"
