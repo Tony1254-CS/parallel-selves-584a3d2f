@@ -6,6 +6,7 @@ import QuantumSuperposition from "@/components/QuantumSuperposition";
 import ParallelSelfCard from "@/components/ParallelSelfCard";
 import TimelineBranch from "@/components/TimelineBranch";
 import DimensionalPortal from "@/components/DimensionalPortal";
+import CollapseMessage from "@/components/CollapseMessage";
 import { ParallelSelf, generateMockSelves } from "@/lib/archetypes";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -18,6 +19,7 @@ const Index = () => {
   const [activeSelf, setActiveSelf] = useState<ParallelSelf | null>(null);
   const [isPortalTransitioning, setIsPortalTransitioning] = useState(false);
   const [showTimeline, setShowTimeline] = useState(false);
+  const [showCollapseMessage, setShowCollapseMessage] = useState(false);
 
   const handleSubmit = useCallback(async (input: string) => {
     setUserInput(input);
@@ -45,7 +47,6 @@ const Index = () => {
       } else {
         toast.error("AI generation failed. Using local simulation.");
       }
-      // Fallback to mock data
       const generated = generateMockSelves(input);
       setSelves(generated);
       setPhase("superposition");
@@ -53,6 +54,7 @@ const Index = () => {
   }, []);
 
   const handleSelectSelf = useCallback((self: ParallelSelf) => {
+    setShowCollapseMessage(true);
     setIsPortalTransitioning(true);
     setTimeout(() => {
       setActiveSelf(self);
@@ -81,10 +83,13 @@ const Index = () => {
     setSelves([]);
     setActiveSelf(null);
     setShowTimeline(false);
+    setShowCollapseMessage(false);
   }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      <CollapseMessage show={showCollapseMessage} />
+
       <AnimatePresence mode="wait">
         {phase === "landing" && (
           <motion.div key="landing" exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.5 }}>
@@ -102,7 +107,6 @@ const Index = () => {
           >
             <div className="absolute inset-0 bg-background" />
 
-            {/* Neural processing animation */}
             <div className="relative z-10 flex flex-col items-center">
               <motion.div
                 className="w-32 h-32 rounded-full border border-primary/30 flex items-center justify-center mb-8"
@@ -123,16 +127,16 @@ const Index = () => {
               </motion.div>
 
               <motion.p
-                className="font-mono text-sm text-primary/60"
-                animate={{ opacity: [0.4, 1, 0.4] }}
+                className="font-mono text-sm text-primary"
+                animate={{ opacity: [0.5, 1, 0.5] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
                 Splitting quantum states...
               </motion.p>
               <motion.p
-                className="font-mono text-xs text-muted-foreground/40 mt-2"
+                className="font-mono text-xs text-muted-foreground mt-2"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+                animate={{ opacity: 0.7 }}
                 transition={{ delay: 1 }}
               >
                 Generating parallel selves from your input
@@ -162,35 +166,35 @@ const Index = () => {
               isTransitioning={isPortalTransitioning}
               dimension={activeSelf?.dimension || "realist"}
             >
-              {/* Top bar */}
-              <div className="sticky top-0 z-30 glass-strong">
+              {/* Top bar — fixed readability */}
+              <div className="sticky top-0 z-30 bg-background/90 backdrop-blur-xl border-b border-border/40">
                 <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <button onClick={handleReset} className="text-xs font-mono text-muted-foreground/50 hover:text-foreground transition-colors">
+                    <button onClick={handleReset} className="text-sm font-mono text-foreground/70 hover:text-foreground transition-colors">
                       ← New Session
                     </button>
-                    <span className="text-border/50">|</span>
-                    <span className="text-xs text-muted-foreground/40 font-mono truncate max-w-xs">
+                    <span className="text-border">|</span>
+                    <span className="text-sm text-foreground/50 font-mono truncate max-w-xs">
                       "{userInput.slice(0, 60)}{userInput.length > 60 ? "..." : ""}"
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setShowTimeline(!showTimeline)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all ${
+                      className={`px-4 py-2 rounded-lg text-sm font-mono transition-all ${
                         showTimeline
-                          ? "bg-primary/20 text-primary border border-primary/30"
-                          : "text-muted-foreground/50 hover:text-foreground border border-border/30"
+                          ? "bg-primary/20 text-primary border border-primary/40"
+                          : "text-foreground/60 hover:text-foreground border border-border/50 hover:border-primary/30"
                       }`}
                     >
                       ⏳ Timelines
                     </button>
                     <button
                       onClick={() => { setActiveSelf(null); }}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all ${
+                      className={`px-4 py-2 rounded-lg text-sm font-mono transition-all ${
                         !activeSelf
-                          ? "bg-primary/20 text-primary border border-primary/30"
-                          : "text-muted-foreground/50 hover:text-foreground border border-border/30"
+                          ? "bg-primary/20 text-primary border border-primary/40"
+                          : "text-foreground/60 hover:text-foreground border border-border/50 hover:border-primary/30"
                       }`}
                     >
                       View All
@@ -199,21 +203,21 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Self selector tabs */}
+              {/* Self selector tabs — improved readability */}
               <div className="max-w-7xl mx-auto px-4 py-4">
                 <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
                   {selves.map((self) => {
-                    const isActive = activeSelf?.id === self.id;
+                    const isActiveSelf = activeSelf?.id === self.id;
                     return (
                       <motion.button
                         key={self.id}
                         onClick={() => handleSwitchSelf(self)}
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.97 }}
-                        className={`shrink-0 px-4 py-2 rounded-xl text-xs font-mono border transition-all ${
-                          isActive
-                            ? `border-${self.dimension}/40 bg-${self.dimension}/10 text-${self.dimension}`
-                            : "border-border/30 text-muted-foreground/50 hover:text-foreground"
+                        className={`shrink-0 px-4 py-2.5 rounded-xl text-sm font-mono border transition-all ${
+                          isActiveSelf
+                            ? "border-primary/50 bg-primary/15 text-foreground"
+                            : "border-border/40 text-foreground/60 hover:text-foreground hover:border-primary/30"
                         }`}
                       >
                         {self.mythological_mapping.symbol} {self.archetype_name}
