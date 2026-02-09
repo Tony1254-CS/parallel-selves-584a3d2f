@@ -1,11 +1,13 @@
 import { useState, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { toast } from "sonner";
 import LandingScreen from "@/components/LandingScreen";
 import QuantumSuperposition from "@/components/QuantumSuperposition";
 import ParallelSelfCard from "@/components/ParallelSelfCard";
 import TimelineBranch from "@/components/TimelineBranch";
 import DimensionalPortal from "@/components/DimensionalPortal";
 import { ParallelSelf, generateMockSelves } from "@/lib/archetypes";
+import { supabase } from "@/integrations/supabase/client";
 
 type Phase = "landing" | "processing" | "superposition" | "explore";
 
@@ -17,16 +19,37 @@ const Index = () => {
   const [isPortalTransitioning, setIsPortalTransitioning] = useState(false);
   const [showTimeline, setShowTimeline] = useState(false);
 
-  const handleSubmit = useCallback((input: string) => {
+  const handleSubmit = useCallback(async (input: string) => {
     setUserInput(input);
     setPhase("processing");
 
-    // Simulate AI processing
-    setTimeout(() => {
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-selves", {
+        body: { userInput: input },
+      });
+
+      if (error) throw error;
+
+      if (data?.selves?.length) {
+        setSelves(data.selves);
+        setPhase("superposition");
+      } else {
+        throw new Error("No selves generated");
+      }
+    } catch (err: any) {
+      console.error("AI generation failed, using fallback:", err);
+      if (err?.message?.includes("Rate limit") || err?.status === 429) {
+        toast.error("Rate limit reached. Please wait a moment and try again.");
+      } else if (err?.status === 402) {
+        toast.error("AI usage limit reached. Please add credits.");
+      } else {
+        toast.error("AI generation failed. Using local simulation.");
+      }
+      // Fallback to mock data
       const generated = generateMockSelves(input);
       setSelves(generated);
       setPhase("superposition");
-    }, 2500);
+    }
   }, []);
 
   const handleSelectSelf = useCallback((self: ParallelSelf) => {
