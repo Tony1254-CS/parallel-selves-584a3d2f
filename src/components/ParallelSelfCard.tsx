@@ -98,7 +98,7 @@ const ParallelSelfCard = ({ self, isActive, onClick, index }: ParallelSelfCardPr
             <span className="text-xl">{self.mythological_mapping.symbol}</span>
             <h3 className={`text-lg font-semibold ${textColor}`}>{self.archetype_name}</h3>
           </div>
-          <p className="text-xs text-muted-foreground/60 font-mono">
+          <p className="text-xs text-muted-foreground/70 font-mono">
             {self.mythological_mapping.deity} · {self.mythological_mapping.domain}
           </p>
         </div>
@@ -106,7 +106,7 @@ const ParallelSelfCard = ({ self, isActive, onClick, index }: ParallelSelfCardPr
           <div className={`text-2xl font-bold font-mono ${textColor}`}>
             {Math.round(self.confidence_score * 100)}%
           </div>
-          <div className="text-[10px] text-muted-foreground/50 uppercase tracking-wider">confidence</div>
+          <div className="text-[11px] text-muted-foreground/60 uppercase tracking-wider">confidence</div>
         </div>
       </div>
 
@@ -115,7 +115,7 @@ const ParallelSelfCard = ({ self, isActive, onClick, index }: ParallelSelfCardPr
         {self.personality_traits.map((trait) => (
           <span
             key={trait}
-            className="px-2.5 py-1 rounded-full text-[11px] font-mono border"
+            className="px-2.5 py-1 rounded-full text-xs font-mono border"
             style={{ borderColor: `hsl(${hsl} / 0.25)`, color: `hsl(${hsl} / 0.85)` }}
           >
             {trait}
@@ -124,7 +124,7 @@ const ParallelSelfCard = ({ self, isActive, onClick, index }: ParallelSelfCardPr
       </div>
 
       {/* Analysis */}
-      <p className="text-sm text-foreground/75 leading-relaxed mb-4">
+      <p className="text-sm text-foreground/80 leading-relaxed mb-4">
         {self.reasoning_analysis}
       </p>
 
@@ -133,10 +133,10 @@ const ParallelSelfCard = ({ self, isActive, onClick, index }: ParallelSelfCardPr
         className="rounded-xl p-4 mb-4 border"
         style={{ borderColor: `hsl(${hsl} / 0.15)`, backgroundColor: `hsl(${hsl} / 0.03)` }}
       >
-        <p className="text-[10px] uppercase tracking-widest text-muted-foreground/50 mb-2 font-mono">
+        <p className="text-[11px] uppercase tracking-widest text-muted-foreground/60 mb-2 font-mono">
           Suggested Action
         </p>
-        <p className="text-sm text-foreground/80">{self.suggested_action}</p>
+        <p className="text-sm text-foreground/85">{self.suggested_action}</p>
       </div>
 
       {/* Mythological archetype panel */}
@@ -144,14 +144,14 @@ const ParallelSelfCard = ({ self, isActive, onClick, index }: ParallelSelfCardPr
         className="rounded-xl p-4 mb-4 border"
         style={{ borderColor: `hsl(${hsl} / 0.12)`, backgroundColor: `hsl(${hsl} / 0.02)` }}
       >
-        <p className="text-[10px] uppercase tracking-widest text-muted-foreground/50 mb-2 font-mono">
+        <p className="text-[11px] uppercase tracking-widest text-muted-foreground/60 mb-2 font-mono">
           Mythological Archetype
         </p>
         <div className="flex items-center gap-3">
           <span className="text-2xl">{self.mythological_mapping.symbol}</span>
           <div>
             <p className={`text-sm font-medium ${textColor}`}>{self.mythological_mapping.deity}</p>
-            <p className="text-xs text-muted-foreground/60">{self.mythological_mapping.domain}</p>
+            <p className="text-xs text-muted-foreground/70">{self.mythological_mapping.domain}</p>
           </div>
         </div>
       </div>
@@ -160,10 +160,10 @@ const ParallelSelfCard = ({ self, isActive, onClick, index }: ParallelSelfCardPr
       <div className="flex items-start gap-3 mb-4">
         <div className={`w-1 min-h-[40px] rounded-full ${barColor}/40 flex-shrink-0`} />
         <div>
-          <p className="text-[10px] uppercase tracking-widest text-muted-foreground/50 mb-1 font-mono">
+          <p className="text-[11px] uppercase tracking-widest text-muted-foreground/60 mb-1 font-mono">
             Emotional Forecast
           </p>
-          <p className="text-xs text-muted-foreground/80 leading-relaxed">{self.emotional_prediction}</p>
+          <p className="text-xs text-muted-foreground leading-relaxed">{self.emotional_prediction}</p>
         </div>
       </div>
 

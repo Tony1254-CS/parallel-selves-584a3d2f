@@ -24,7 +24,7 @@ const FutureRoadmap = ({ self }: FutureRoadmapProps) => {
 
   return (
     <div className="rounded-2xl border p-5" style={{ borderColor: `hsl(${hsl} / 0.2)`, backgroundColor: `hsl(${hsl} / 0.03)` }}>
-      <p className="text-[10px] uppercase tracking-widest text-muted-foreground/50 mb-5 font-mono">
+      <p className="text-[11px] uppercase tracking-widest text-muted-foreground/60 mb-5 font-mono">
         🗺️ Future Roadmap
       </p>
 
@@ -58,7 +58,7 @@ const FutureRoadmap = ({ self }: FutureRoadmapProps) => {
             <p className="text-[10px] uppercase tracking-widest font-mono mb-1.5" style={{ color: `hsl(${hsl} / 0.7)` }}>
               {stageLabels[i] || `Stage ${i + 1}`}
             </p>
-            <p className="text-sm text-foreground/70 leading-relaxed">{paragraph}</p>
+            <p className="text-sm text-foreground/80 leading-relaxed">{paragraph}</p>
           </motion.div>
         ))}
       </div>

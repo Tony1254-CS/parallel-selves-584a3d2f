@@ -34,7 +34,7 @@ const DecisionIntelligence = ({ self }: DecisionIntelligenceProps) => {
 
   return (
     <div className="rounded-2xl border p-5" style={{ borderColor: `hsl(${hsl} / 0.2)`, backgroundColor: `hsl(${hsl} / 0.03)` }}>
-      <p className="text-[10px] uppercase tracking-widest text-muted-foreground/50 mb-4 font-mono">
+      <p className="text-[11px] uppercase tracking-widest text-muted-foreground/60 mb-4 font-mono">
         Decision Intelligence
       </p>
 
@@ -63,7 +63,7 @@ const DecisionIntelligence = ({ self }: DecisionIntelligenceProps) => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.3 }}
-          className="text-sm text-foreground/75 leading-relaxed"
+          className="text-sm text-foreground/80 leading-relaxed"
         >
           {content[activeTab]}
         </motion.p>

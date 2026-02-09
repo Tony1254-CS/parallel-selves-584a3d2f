@@ -219,11 +219,11 @@ const Index = () => {
               <div className="sticky top-0 z-30 bg-background/90 backdrop-blur-xl border-b border-border/40">
                 <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <button onClick={handleReset} className="text-sm font-mono text-foreground/70 hover:text-foreground transition-colors">
+                    <button onClick={handleReset} className="text-sm font-mono text-foreground/80 hover:text-foreground transition-colors">
                       ← New Session
                     </button>
                     <span className="text-border">|</span>
-                    <span className="text-sm text-foreground/50 font-mono truncate max-w-xs">
+                    <span className="text-sm text-foreground/60 font-mono truncate max-w-xs">
                       "{userInput.slice(0, 60)}{userInput.length > 60 ? "..." : ""}"
                     </span>
                   </div>
@@ -233,7 +233,7 @@ const Index = () => {
                       className={`px-4 py-2 rounded-lg text-sm font-mono transition-all ${
                         showTimeline
                           ? "bg-primary/20 text-primary border border-primary/40"
-                          : "text-foreground/60 hover:text-foreground border border-border/50 hover:border-primary/30"
+                          : "text-foreground/70 hover:text-foreground border border-border/50 hover:border-primary/30"
                       }`}
                     >
                       ⏳ Timelines
@@ -243,7 +243,7 @@ const Index = () => {
                       className={`px-4 py-2 rounded-lg text-sm font-mono transition-all ${
                         showCompare
                           ? "bg-primary/20 text-primary border border-primary/40"
-                          : "text-foreground/60 hover:text-foreground border border-border/50 hover:border-primary/30"
+                          : "text-foreground/70 hover:text-foreground border border-border/50 hover:border-primary/30"
                       }`}
                     >
                       ⚔️ Compare
@@ -253,7 +253,7 @@ const Index = () => {
                       className={`px-4 py-2 rounded-lg text-sm font-mono transition-all ${
                         !activeSelf && !showCompare
                           ? "bg-primary/20 text-primary border border-primary/40"
-                          : "text-foreground/60 hover:text-foreground border border-border/50 hover:border-primary/30"
+                          : "text-foreground/70 hover:text-foreground border border-border/50 hover:border-primary/30"
                       }`}
                     >
                       View All
@@ -276,7 +276,7 @@ const Index = () => {
                         className={`shrink-0 px-4 py-2.5 rounded-xl text-sm font-mono border transition-all ${
                           isActiveSelf
                             ? "border-primary/50 bg-primary/15 text-foreground"
-                            : "border-border/40 text-foreground/60 hover:text-foreground hover:border-primary/30"
+                            : "border-border/40 text-foreground/70 hover:text-foreground hover:border-primary/30"
                         }`}
                       >
                         {self.mythological_mapping.symbol} {self.archetype_name}
