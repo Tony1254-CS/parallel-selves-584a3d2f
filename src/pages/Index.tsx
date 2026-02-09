@@ -7,6 +7,7 @@ import ParallelSelfCard from "@/components/ParallelSelfCard";
 import TimelineBranch from "@/components/TimelineBranch";
 import DimensionalPortal from "@/components/DimensionalPortal";
 import TensionField from "@/components/TensionField";
+import CompareSelves from "@/components/CompareSelves";
 import CollapseMessage from "@/components/CollapseMessage";
 import { ParallelSelf, generateMockSelves } from "@/lib/archetypes";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,6 +21,7 @@ const Index = () => {
   const [activeSelf, setActiveSelf] = useState<ParallelSelf | null>(null);
   const [isPortalTransitioning, setIsPortalTransitioning] = useState(false);
   const [showTimeline, setShowTimeline] = useState(false);
+  const [showCompare, setShowCompare] = useState(false);
   const [showCollapseMessage, setShowCollapseMessage] = useState(false);
 
   const handleSubmit = useCallback(async (input: string) => {
@@ -84,6 +86,7 @@ const Index = () => {
     setSelves([]);
     setActiveSelf(null);
     setShowTimeline(false);
+    setShowCompare(false);
     setShowCollapseMessage(false);
   }, []);
 
@@ -191,9 +194,19 @@ const Index = () => {
                       ⏳ Timelines
                     </button>
                     <button
-                      onClick={() => { setActiveSelf(null); }}
+                      onClick={() => { setShowCompare(!showCompare); if (!showCompare) setShowTimeline(false); }}
                       className={`px-4 py-2 rounded-lg text-sm font-mono transition-all ${
-                        !activeSelf
+                        showCompare
+                          ? "bg-primary/20 text-primary border border-primary/40"
+                          : "text-foreground/60 hover:text-foreground border border-border/50 hover:border-primary/30"
+                      }`}
+                    >
+                      ⚔️ Compare
+                    </button>
+                    <button
+                      onClick={() => { setActiveSelf(null); setShowCompare(false); }}
+                      className={`px-4 py-2 rounded-lg text-sm font-mono transition-all ${
+                        !activeSelf && !showCompare
                           ? "bg-primary/20 text-primary border border-primary/40"
                           : "text-foreground/60 hover:text-foreground border border-border/50 hover:border-primary/30"
                       }`}
@@ -238,7 +251,16 @@ const Index = () => {
                 )}
 
                 <AnimatePresence mode="wait">
-                  {showTimeline ? (
+                  {showCompare ? (
+                    <motion.div
+                      key="compare"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                    >
+                      <CompareSelves selves={selves} onClose={() => setShowCompare(false)} />
+                    </motion.div>
+                  ) : showTimeline ? (
                     <motion.div
                       key="timeline"
                       initial={{ opacity: 0, y: 20 }}
