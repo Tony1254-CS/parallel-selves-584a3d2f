@@ -1,6 +1,8 @@
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { ParallelSelf } from "@/lib/archetypes";
 import { useRef } from "react";
+import DecisionIntelligence from "./DecisionIntelligence";
+import FutureRoadmap from "./FutureRoadmap";
 
 interface ParallelSelfCardProps {
   self: ParallelSelf;
@@ -155,7 +157,7 @@ const ParallelSelfCard = ({ self, isActive, onClick, index }: ParallelSelfCardPr
       </div>
 
       {/* Emotional prediction */}
-      <div className="flex items-start gap-3">
+      <div className="flex items-start gap-3 mb-4">
         <div className={`w-1 min-h-[40px] rounded-full ${barColor}/40 flex-shrink-0`} />
         <div>
           <p className="text-[10px] uppercase tracking-widest text-muted-foreground/50 mb-1 font-mono">
@@ -164,6 +166,18 @@ const ParallelSelfCard = ({ self, isActive, onClick, index }: ParallelSelfCardPr
           <p className="text-xs text-muted-foreground/80 leading-relaxed">{self.emotional_prediction}</p>
         </div>
       </div>
+
+      {/* Decision Intelligence */}
+      {isActive && self.decision_intelligence?.why_this_self && (
+        <div className="mb-4">
+          <DecisionIntelligence self={self} />
+        </div>
+      )}
+
+      {/* Future Roadmap */}
+      {isActive && self.future_roadmap && (
+        <FutureRoadmap self={self} />
+      )}
     </motion.div>
   );
 };
